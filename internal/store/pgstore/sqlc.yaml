@@ -1,0 +1,15 @@
+version: "2"
+sql:
+  - engine: "postgresql" # Define o tipo de SQL utilizado
+    queries: "./queries" # Define o diretorio das queries que serão utilizadas
+    schema: "./migrations" # Define o diretorio das migrações/schemas que serão utilizados
+    gen: # Geração de código
+      go:
+        out: "pgstore" # Output
+        package: "pgstore"
+        sql_package: "pgx/v5"
+        overrides: # Sobrescreve, de forma especifica, o id do DataBase para o tipo utilizado pela Google
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"

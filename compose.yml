@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:latest # Imagem do container utilizado
+    restart: unless-stopped # Não reinicia até ser parado
+    ports:
+      - ${WSRS_DATABASE_PORT:-5432}:5432 # ${(porta utilizar):-(se não existe, use está)}
+    environment:
+      POSTGRES_USER: ${WSRS_DATABASE_USER}
+      POSTGRES_PASSWORD: ${WSRS_DATABASE_PASSWORD}
+      POSTGRES_DB: ${WSRS_DATABASE_NAME}
+    volumes:
+      - db:/var/lib/postgresql/data # Define qual parte do container será armazenada no volume mencionado
+  
+  pgadmin: # Usar uma imagem de serviço de administração de SQL e criar uma GUI para o cliente
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    depends_on:
+      - db # Vai inicializar somente se o serviço 'db' iniciar
+    ports:
+      - 8081:80
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin:/val/lib/pgadmin
+
+volumes:
+  db:
+    driver: local # Os arquivos do container Docker serão clonados para um diretorio na máquina local
+  pgadmin:
+    driver: local
